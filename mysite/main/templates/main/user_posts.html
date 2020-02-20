@@ -1,0 +1,41 @@
+{% extends "main/main_base.html" %}
+
+{% block title%}{{ view.kwargs.username }}'s Profile{% endblock %}
+
+{% block header %}
+  <div class="card-profile-stats">
+    <div class="card-profile-stats-intro">
+      <img class="card-profile-stats-intro-pic" src="{{ prof_user.profile.image.url }}" alt="profile-image" />
+      <div class="card-profile-stats-intro-content">
+        <h3>{{ view.kwargs.username }}</h3>
+        {% if user.is_authenticated and user.username != view.kwargs.username %}
+          {% if is_follower %}
+            <a class="button button-rounded-hover" href="{% url 'unfollow' view.kwargs.username %}">Unfollow</a>
+          {% else %}
+            <a class="button button-rounded-hover" href="{% url 'follow' view.kwargs.username %}">Follow</a>
+          {% endif %}
+          <a class="button button-rounded-hover" href="{% url 'room' user.username|add:"_"|add:view.kwargs.username %}">Message</a>
+        {% endif %}
+      </div> <!-- /.card-profile-stats-intro-content -->
+    </div> <!-- /.card-profile-stats-intro -->
+    <hr />
+    <div class="card-profile-stats-container">
+      <div class="card-profile-stats-statistic">
+        <span class="stat">{{ page_obj.paginator.count }}</span>
+        <p>posts</p>
+      </div> <!-- /.card-profile-stats-statistic -->
+      <div class="card-profile-stats-statistic">
+        <span class="stat">{{ prof_user.profile.followers.count }}</span>
+        <p>followers</p>
+      </div> <!-- /.card-profile-stats-statistic -->
+      <div class="card-profile-stats-statistic">
+        <span class="stat">{{ prof_user.profile.follows.count }}</span>
+        <p>following</p>
+      </div> <!-- /.card-profile-stats-statistic -->
+      <div class="card-profile-stats-statistic">
+        <span class="stat">{{ prof_user.profile.total_likes }}</span>
+        <p>likes</p>
+      </div> <!-- /.card-profile-stats-statistic -->
+    </div> <!-- /.card-profile-stats-container -->
+  </div> <!-- /.card-profile-stats -->
+{% endblock %}

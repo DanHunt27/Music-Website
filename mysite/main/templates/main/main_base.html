@@ -1,0 +1,95 @@
+{% extends "main/base.html" %}
+
+{% block title%}Music Social | Home{% endblock %}
+
+{% block header %}
+{% endblock %}
+
+{% block content %}
+  {% if posts.count is 0  %}
+    <h3 style="text-align:center"> There are no posts here yet </h3>
+  {% else %}
+    {% for post in posts %}
+      <div class="blog-post">
+        {% if post.link == '' %}
+          <h3>Rick Astley - Never Gonna Give You Up<small style="float:right"> <a href="{% url 'user-posts' post.user.username %}"> {{ post.user }} <img width=50px height=50px src="{{ post.user.profile.image.url }}"></a></small></h3>
+        {% else %}
+          <h3>{{ post.artist_name }} - {{ post.song_name }}<small style="float:right"> <a href="{% url 'user-posts' post.user.username %}"> {{ post.user }} <img width=50px height=50px src="{{ post.user.profile.image.url }}"></a></small></h3>
+        {% endif %}
+        <small class="text-muted">{{ post.date_posted|date:"F d, Y" }}
+          {% if post.user == user %}
+            <a style="margin-left:7px;margin-right:7px" href="{% url 'post-update' post.id %}">Update</a>
+            <a href="{% url 'post-delete' post.id %}">Delete</a>
+          {% endif %}
+        </small>
+        {% if post.link == '' %}
+          <iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        {% else %}
+          <iframe width="100%" height="125" scrolling="no" frameborder="no" allow="autoplay" src="{{ post.link }}"></iframe>
+        {% endif %}
+        <p>{{ post.description }}</p>
+            <a class="hollow button" href="{% url 'comment-create' post.id %}?next={{request.path}}">Leave a Comment</a>
+            {% if post in user.profile.likes.all %}
+              <span style="float:right"><a class="button" style="color:white" href="{% url 'like' post.id %}?next={{request.path}}">Like: {{ post.liked.count }}</a></span>
+            {% else %}
+              <span style="float:right"><a class="hollow button" href="{% url 'like' post.id %}?next={{request.path}}">Like: {{ post.liked.count }}</a></span>
+            {% endif %}
+      </div>
+
+      <!-- comments -->
+      <div class="comment-section-container">
+        <h5>Comments ({{ post.comments.count }})</h5>
+        {% for comment in post.comments.all %}
+          <div class="comment-section-author">
+            <img src="{{ comment.author.profile.image.url }}" width=40px height=40px alt="profile picture">
+            <div class="comment-section-name">
+              <h6>
+                <a href="{% url 'user-posts' comment.author.username %}">{{ comment.author.username }}</a>
+                <small>{{ comment.date_posted|date:"D, d M, Y" }}</small>
+              </h6>
+
+            </div>
+          </div>
+          <div class="comment-section-text">
+            <p>{{ comment.text }}
+              {% if comment.author == user %}
+                <a href="{% url 'comment-delete' comment.id %}">Delete</a>
+              {% endif %}
+            </p>
+          </div>
+        {% empty %}
+            <p>No comments here yet</p>
+        {% endfor %}
+      </div>
+      <!--/comments-->
+      <hr>
+    {% endfor %}
+  {% endif %}
+
+  <!--Pagination-->
+  {% if is_paginated %}
+    <div class="grid-x cell">
+      <div class="pagination">
+        {% if page_obj.has_previous %}
+          <li><a href="?page=1">First</a></li>
+          <li><a href="?page={{ page_obj.previous_page_number }}">Previous</a></li>
+        {% endif %}
+
+        {% for num in page_obj.paginator.page_range %}
+          {% if page_obj.number == num %}
+            <!-- CURRENT PAGE -->
+            <li><a class="current" href="?page={{ num }}">{{ num }}</a></li>
+          {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+            <li><a href="?page={{ num }}">{{ num }}</a></li>
+          {% endif %}
+        {% endfor %}
+
+        {% if page_obj.has_next %}
+          <li><a href="?page={{ page_obj.next_page_number }}">Next</a>
+          <li><a href="?page={{ page_obj.paginator.num_pages }}">Last</a>
+        {% endif %}
+      </div>
+    </div>
+  {% endif %}
+  <!--Pagination-->
+{% endblock content %}

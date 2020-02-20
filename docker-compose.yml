@@ -1,0 +1,21 @@
+#adapted from example in docker documentation
+version: '3'
+
+services:
+  web:
+    links:
+      - redis:redis
+    depends_on:
+      - redis
+    build: .
+    volumes:
+       - .:/code
+    ports:
+      - 8000:8000
+    command: python /code/mysite/manage.py runserver 0.0.0.0:8000
+
+  redis:
+    container_name: redisContainer
+    image: redis
+    expose:
+      - 6379

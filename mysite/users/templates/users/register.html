@@ -1,0 +1,24 @@
+{% extends "main/base.html" %}
+
+{% block title%}Music Social | Register{% endblock %}
+
+{% load crispy_forms_tags %}
+{% block content %}
+    <div>
+        <form method="POST">
+            {% csrf_token %}
+            <fieldset>
+                <legend>Join Today</legend>
+                {{ form | crispy }}
+            </fieldset>
+            <div>
+                <button class="button" type="submit">Sign Up</button>
+            </div>
+        </form>
+        <div>
+            <small>
+                Already Have An Account? <a class="ml-2" href="{% url 'login' %}">Sign In</a>
+            </small>
+        </div>
+    </div>
+{% endblock content %}

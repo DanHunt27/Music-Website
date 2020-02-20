@@ -1,0 +1,27 @@
+{% extends "main/base.html" %}
+
+{% block title%}Music Social | Login{% endblock %}
+
+{% load crispy_forms_tags %}
+{% block content %}
+    <div>
+        <form method="POST">
+            {% csrf_token %}
+            <fieldset>
+                <legend>Log In</legend>
+                {{ form | crispy }}
+            </fieldset>
+            <div>
+                <button class="button" type="submit">Login</button>
+                <small class="text-muted ml-2">
+                    <a href="{% url 'password_reset' %}">Forgot Password?</a>
+                </small>
+            </div>
+        </form>
+        <div>
+            <small>
+                Don't Have An Account? <a class="ml-2" href="{% url 'register' %}">Sign Up</a>
+            </small>
+        </div>
+    </div>
+{% endblock content %}
