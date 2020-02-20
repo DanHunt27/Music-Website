@@ -1,14 +1,7 @@
-# starter_repo
-Repo to initialize class repositories from, setups initial CI/CD for gitlab as well
+This is a sample website that was built to gain experience with web development.
 
-## regular files
+Overview
+------
+This is a social media website that allows the users to post songs from SoundCloud. It is essentially like Twitter, but users are sharing music. It is built with Django, and uses Foundation for the CSS styling. It allows users to create accounts, then post links to songs on SoundCloud. It will then convert the urls to a SoundCloud player, so that everyone can listen to it. As with other social media websites users can follow each other, like posts, and comment on posts. There is also a live chat feature that is built using Django Channels.
 
-* **Dockerfile** - Initial dockerfile to help us setup our environment
-* **docker-compose.yml** - Initial starter docker-compose file
-* **requirements.txt** - Blank requirements.txt file for us to add python package requirements into
-
-## hidden files
-
-* **.gitignore** - ignores python code & macOS generated files that don't need to be in the repo
-* **.gitlab-ci.yml** - initial CI/CD pipeline file that will be used in CINS465 during class, should be modified to fit your project/code
-* **.coveragerc** - provides initial settings for the coverage.py package to test our CI testing coverage and omit specific files/folders/lines that are problematic. This will need to be moved and modified to be useful, and will be introduced in class. 
+### [Click here to see the live website](http://35.212.136.98/ "Music Social Homepage")
