@@ -7,7 +7,7 @@
 
 {% block content %}
   {% if posts.count is 0  %}
-    <h3 style="text-align:center"> There are no posts here yet </h3>
+    <h3 style="text-align:center;"> There are no posts here yet </h3>
   {% else %}
     {% for post in posts %}
       <div class="blog-post">
@@ -28,12 +28,21 @@
           <iframe width="100%" height="125" scrolling="no" frameborder="no" allow="autoplay" src="{{ post.link }}"></iframe>
         {% endif %}
         <p>{{ post.description }}</p>
-            <a class="hollow button" href="{% url 'comment-create' post.id %}?next={{request.path}}">Leave a Comment</a>
-            {% if post in user.profile.likes.all %}
-              <span style="float:right"><a class="button" style="color:white" href="{% url 'like' post.id %}?next={{request.path}}">Like: {{ post.liked.count }}</a></span>
-            {% else %}
-              <span style="float:right"><a class="hollow button" href="{% url 'like' post.id %}?next={{request.path}}">Like: {{ post.liked.count }}</a></span>
-            {% endif %}
+        {% if user.is_authenticated %}
+          <a class="hollow button" href="{% url 'comment-create' post.id %}?next={{request.path}}">Leave a Comment</a>
+        {% else %}
+          <a class="hollow button" data-toggle="comment-need-account">Leave a Comment</a>
+        {% endif %}
+
+        {% if post in user.profile.likes.all %}
+          <span style="float:right"><a class="button" style="color:white" href="{% url 'like' post.id %}?next={{request.path}}">Like: {{ post.liked.count }}</a></span>
+        {% else %}
+          {% if user.is_authenticated %}
+            <span style="float:right"><a class="hollow button" href="{% url 'like' post.id %}?next={{request.path}}">Like: {{ post.liked.count }}</a></span>
+          {% else %}
+            <span style="float:right"><a class="hollow button" data-toggle="like-need-account">Like: {{ post.liked.count }}</a></span>
+          {% endif %}
+        {% endif %}
       </div>
 
       <!-- comments -->
@@ -64,6 +73,30 @@
       <!--/comments-->
       <hr>
     {% endfor %}
+
+    <!-- modal for trying to comment with no account -->
+    <div class="large reveal text-center" id="comment-need-account" data-reveal style="padding-top: 100px; padding-bottom: 100px;">
+      <h2 style="padding-bottom: 10px;">Create an Account</h2>
+      <p style="padding-bottom: 50px;">You need an account in order to leave a comment</p>
+      <a class="button radius" href="{% url 'register' %}" style="margin-right: 15px;">Register</a>
+      <a class="hollow button radius" href="{% url 'login' %}">Login</a>
+      <button class="close-button" data-close aria-label="Close reveal" type="button">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+
+    <!-- modal for trying to like a post with no account -->
+    <div class="large reveal text-center" id="like-need-account" data-reveal
+      style="padding-top: 100px; padding-bottom: 100px;">
+      <h2 style="padding-bottom: 10px;">Create an Account</h2>
+      <p style="padding-bottom: 50px;">You need an account in order to like a post</p>
+      <a class="button radius" href="{% url 'register' %}" style="margin-right: 15px;">Register</a>
+      <a class="hollow button radius" href="{% url 'login' %}">Login</a>
+      <button class="close-button" data-close aria-label="Close reveal" type="button">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+
   {% endif %}
 
   <!--Pagination-->
