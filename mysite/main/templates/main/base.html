@@ -5,9 +5,9 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{% block title%}Music Social{% endblock %}</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/foundation/6.4.3/css/foundation.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/foundation/6.6.3/css/foundation.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/motion-ui/1.2.3/motion-ui.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/foundation/6.4.3/css/foundation-prototype.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/foundation/6.6.3/css/foundation-prototype.min.css">
     <link href='https://cdnjs.cloudflare.com/ajax/libs/foundicons/3.0.0/foundation-icons.css' rel='stylesheet' type='text/css'>
     <link href="{% static 'main/main.css' %}" rel="stylesheet" type="text/css">
     {% block css %}
@@ -27,22 +27,39 @@
       ga('foundation.send', 'pageview');
 
     </script>
-    <div class="top-bar">
+    <div style="background-color: white;" class="top-bar">
       <div class="top-bar-left">
-        <ul class="menu">
+        <ul style="background-color: white;" class="menu">
           <li class="menu-text"><a class="ml-2" href="{% url 'index' %}">Music Social</a></li>
         </ul>
       </div>
       <div class="top-bar-right">
-        <ul class="menu">
+        <!--<ul style="background-color: white;" class="menu align-middle">
           {% if user.is_authenticated %}
-            <li><a href="{% url 'account' %}">{{ user.username }}</a></li>
+            <li><a href="{% url 'account' %}">{{ user.username }} <img width=40px height=40px src="{{ user.profile.image.url }}"></a></li>
             <li><a href="{% url 'logout' %}">Logout</a></li>
           {% else %}
-            <li><a href="{% url 'login' %}">Login</a></li>
-            <li><a href="{% url 'register' %}">Register</a></li>
+            <li style="margin-right: 15px;"><a class="button radius" href="{% url 'register' %}">Register</a></li>
+            <li><a class="hollow button radius" href="{% url 'login' %}">Login</a></li>
           {% endif %}
-        </ul>
+        </ul>-->
+
+
+        {% if user.is_authenticated %}
+          <button class="clear button" type="button" data-toggle="account-links">
+            <h6 style="display: inline;">{{ user.username }}</h6> <img width=50px height=50px src="{{ user.profile.image.url }}">
+          </button>
+          <ul class="small dropdown-pane text-center no-bullet" data-position="bottom" data-alignment="right" id="account-links"
+            data-dropdown data-auto-focus="true">
+            <li><a href="{% url 'account' %}">Account</a></li>
+            <li><a href="{% url 'logout' %}">Logout</a></li>
+          </ul>
+        {% else %}
+          <ul style="background-color: white;" class="menu align-middle">
+            <li style="margin-right: 15px;"><a class="button radius" href="{% url 'register' %}">Register</a></li>
+            <li><a class="hollow button radius" href="{% url 'login' %}">Login</a></li>
+          </ul>
+        {% endif %}
       </div>
     </div>
     <article class="grid-container" style="margin-top:15px">
@@ -78,7 +95,7 @@
   </body>
 </html>
 <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/foundation/6.4.3/js/foundation.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/foundation/6.6.3/js/foundation.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/motion-ui/1.2.3/motion-ui.min.js"></script>
 <script>
   $(document).foundation();
