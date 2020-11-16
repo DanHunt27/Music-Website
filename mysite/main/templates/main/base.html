@@ -34,17 +34,6 @@
         </ul>
       </div>
       <div class="top-bar-right">
-        <!--<ul style="background-color: white;" class="menu align-middle">
-          {% if user.is_authenticated %}
-            <li><a href="{% url 'account' %}">{{ user.username }} <img width=40px height=40px src="{{ user.profile.image.url }}"></a></li>
-            <li><a href="{% url 'logout' %}">Logout</a></li>
-          {% else %}
-            <li style="margin-right: 15px;"><a class="button radius" href="{% url 'register' %}">Register</a></li>
-            <li><a class="hollow button radius" href="{% url 'login' %}">Login</a></li>
-          {% endif %}
-        </ul>-->
-
-
         {% if user.is_authenticated %}
           <button class="clear button" type="button" data-toggle="account-links">
             <h6 style="display: inline;">{{ user.username }}</h6> <img width=50px height=50px src="{{ user.profile.image.url }}">
