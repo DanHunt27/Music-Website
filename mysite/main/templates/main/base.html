@@ -27,9 +27,9 @@
       ga('foundation.send', 'pageview');
 
     </script>
-    <div style="background-color: rgb(250, 250, 250);" class="top-bar">
+    <div style="background-color: white;" class="top-bar" data-sticky data-options="marginTop:0;" data-top-anchor="1" data-btm-anchor="content:bottom">
       <div class="top-bar-left">
-        <ul style="background-color: rgb(250, 250, 250);" class="menu">
+        <ul style="background-color: white;" class="menu">
           <li class="menu-text"><a class="ml-2" href="{% url 'index' %}">Music Social</a></li>
         </ul>
       </div>
@@ -44,7 +44,7 @@
             <li><a href="{% url 'logout' %}">Logout</a></li>
           </ul>
         {% else %}
-          <ul style="background-color: rgb(250, 250, 250);" class="menu align-middle">
+          <ul style="background-color: white;" class="menu align-middle">
             <li class="left-button"><a class="button radius" href="{% url 'register' %}">Register</a></li>
             <li><a class="hollow button radius" href="{% url 'login' %}">Login</a></li>
           </ul>
@@ -54,7 +54,7 @@
     <article class="grid-container" style="margin-top:15px;">
       <div class="grid-x grid-margin-x" id="content">
         <div class="medium-3 cell" data-sticky-container style="margin-right: 0px;">
-          <div class="sticky" data-sticky data-anchor="content">
+          <div class="sticky" data-sticky data-anchor="content" data-margin-top="7">
             <ul class="list-group">
               {% url 'index' as index %}
               {% url 'user-posts' user.username as userPosts %}

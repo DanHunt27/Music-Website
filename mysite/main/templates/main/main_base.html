@@ -47,7 +47,26 @@
         {% endif %}
         <p>{{ post.description }}</p>
         {% if user.is_authenticated %}
-          <a class="hollow button" href="{% url 'comment-create' post.id %}?next={{request.path}}">Leave a Comment</a>
+          <!--<a class="hollow button" href="{% url 'comment-create' post.id %}?next={{request.path}}">Leave a Comment</a>-->
+          <a class="hollow button" data-toggle="create-comment">Leave a Comment</a>
+          <!-- modal for deleting post -->
+          {% load crispy_forms_tags %}
+          <div class="large reveal text-center" id="create-comment" data-reveal>
+            <form action="{% url 'comment-create' post.id %}" method="POST">
+              {% csrf_token %}
+              <fieldset class="form-group">
+                <legend class="border-bottom mb-4">New Comment</legend>
+                <textarea required id="id_text" name="text" rows="10" cols="50"></textarea>
+              </fieldset>
+              <div class="form-group">
+                <button class="button" type="submit">Comment</button>
+              </div>
+            </form>
+            <button class="close-button" data-close aria-label="Close reveal" type="button">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <!-- modal for deleting post -->
         {% else %}
           <a class="hollow button" data-toggle="comment-need-account">Leave a Comment</a>
         {% endif %}
