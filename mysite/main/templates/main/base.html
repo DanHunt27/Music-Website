@@ -27,9 +27,9 @@
       ga('foundation.send', 'pageview');
 
     </script>
-    <div style="background-color: white;" class="top-bar">
+    <div style="background-color: rgb(250, 250, 250);" class="top-bar">
       <div class="top-bar-left">
-        <ul style="background-color: white;" class="menu">
+        <ul style="background-color: rgb(250, 250, 250);" class="menu">
           <li class="menu-text"><a class="ml-2" href="{% url 'index' %}">Music Social</a></li>
         </ul>
       </div>
@@ -44,16 +44,16 @@
             <li><a href="{% url 'logout' %}">Logout</a></li>
           </ul>
         {% else %}
-          <ul style="background-color: white;" class="menu align-middle">
-            <li style="margin-right: 15px;"><a class="button radius" href="{% url 'register' %}">Register</a></li>
+          <ul style="background-color: rgb(250, 250, 250);" class="menu align-middle">
+            <li class="left-button"><a class="button radius" href="{% url 'register' %}">Register</a></li>
             <li><a class="hollow button radius" href="{% url 'login' %}">Login</a></li>
           </ul>
         {% endif %}
       </div>
     </div>
-    <article class="grid-container" style="margin-top:15px">
+    <article class="grid-container" style="margin-top:15px;">
       <div class="grid-x grid-margin-x" id="content">
-        <div class="medium-3 cell" data-sticky-container>
+        <div class="medium-3 cell" data-sticky-container style="margin-right: 0px;">
           <div class="sticky" data-sticky data-anchor="content">
             <ul class="list-group">
               {% url 'index' as index %}
@@ -67,11 +67,11 @@
                 <a href="{% url 'post-create' %}"><li class="list-group-item {% if request.get_full_path == postCreate %}active{%endif%}">Post Song</li></a>
                 <a href="{% url 'chat-index' %}"><li class="list-group-item {% if request.get_full_path == chatIndex %}active{%endif%}">Messages</li></a>
               {% endif %}
-              <a href="{% url 'explore' %}"><li class="list-group-item {% if request.get_full_path == explore %}active{%endif%}">Explore</li></a>
+              <a href="{% url 'explore' %}"><li class="list-group-item {% if request.get_full_path == explore %}active{%endif%}" style="border: 0px;">Explore</li></a>
             </ul>
           </div>
         </div>
-        <div class="medium-9 cell">
+        <div class="medium-9 cell main-content" style="margin-left: 0px;">
           {% block header %}{% endblock %}
           {% block content %}{% endblock %}
         </div>
