@@ -49,7 +49,7 @@
         {% if user.is_authenticated %}
           <a class="hollow button" href="{% url 'comment-create' post.id %}?next={{request.path}}">Leave a Comment</a>
         {% else %}
-          <a class="hollow button" data-toggle="comment-need-account">Leave a Comment</a>
+          <a class="hollow button" data-toggle="need-account">Leave a Comment</a>
         {% endif %}
 
         {% if post in user.profile.likes.all %}
@@ -58,7 +58,7 @@
           {% if user.is_authenticated %}
             <span style="float:right"><a class="hollow button" href="{% url 'like' post.id %}?next={{request.path}}">Like: {{ post.liked.count }}</a></span>
           {% else %}
-            <span style="float:right"><a class="hollow button" data-toggle="like-need-account">Like: {{ post.liked.count }}</a></span>
+            <span style="float:right"><a class="hollow button" data-toggle="need-account">Like: {{ post.liked.count }}</a></span>
           {% endif %}
         {% endif %}
       </div>
@@ -109,21 +109,10 @@
       <hr style="color: #e6e6e6; margin-top: 0px;">
     {% endfor %}
 
-    <!-- modal for trying to comment with no account -->
-    <div class="large reveal text-center" id="comment-need-account" data-reveal>
+    <!-- modal for trying to do something with no account -->
+    <div class="large reveal text-center" id="need-account" data-reveal>
       <h2 style="padding-bottom: 10px;">Create an Account</h2>
-      <p style="padding-bottom: 50px;">You need an account in order to leave a comment</p>
-      <a class="button radius left-button" href="{% url 'register' %}">Register</a>
-      <a class="hollow button radius" href="{% url 'login' %}">Login</a>
-      <button class="close-button" data-close aria-label="Close reveal" type="button">
-        <span aria-hidden="true">&times;</span>
-      </button>
-    </div>
-
-    <!-- modal for trying to like a post with no account -->
-    <div class="large reveal text-center" id="like-need-account" data-reveal>
-      <h2 style="padding-bottom: 10px;">Create an Account</h2>
-      <p style="padding-bottom: 50px;">You need an account in order to like a post</p>
+      <p style="padding-bottom: 50px;">You need an account to do that</p>
       <a class="button radius left-button" href="{% url 'register' %}">Register</a>
       <a class="hollow button radius" href="{% url 'login' %}">Login</a>
       <button class="close-button" data-close aria-label="Close reveal" type="button">
