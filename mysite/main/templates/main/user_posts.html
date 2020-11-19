@@ -15,6 +15,9 @@
             <a class="button button-rounded-hover" href="{% url 'follow' view.kwargs.username %}">Follow</a>
           {% endif %}
           <a class="button button-rounded-hover" href="{% url 'room' user.username|add:"_"|add:view.kwargs.username %}">Message</a>
+        {% else %}
+          <a class="button button-rounded-hover" data-toggle="need-account">Follow</a>
+          <a class="button button-rounded-hover" data-toggle="need-account">Message</a>
         {% endif %}
       </div> <!-- /.card-profile-stats-intro-content -->
     </div> <!-- /.card-profile-stats-intro -->

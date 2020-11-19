@@ -1,166 +1,120 @@
+{% extends "chat/chat_base.html" %}
+
 {% load static %}
-<!doctype html>
-<html lang="en" ng-app="application">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/foundation/6.4.3/css/foundation.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/motion-ui/1.2.3/motion-ui.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/foundation/6.4.3/css/foundation-prototype.min.css">
-    <link href='https://cdnjs.cloudflare.com/ajax/libs/foundicons/3.0.0/foundation-icons.css' rel='stylesheet' type='text/css'>
-
-    <title>Music Social | Chat</title>
-    <link href="{% static 'chat/app.css' %}" rel="stylesheet" type="text/css">
-    <script src="{% static 'chat/app.js' %}"></script>
-    <script src="{% static 'chat/routes.js' %}"></script>
-    <script src="{% static 'chat/angular.js' %}"></script>
-  </head>
-
-  <style>
-    .message-input, .message-input .inline-label, .menu-bar {margin-bottom: 0;}
-    #sidebar, .messages {border-right: 1px solid #eee;}
-    .message-side-bar {border-left: 1px solid #eee;}
-    .avatar-section {border-top: 1px solid #eee;}
-  </style>
-
-  <body>
-    <div class="grid-frame">
-      <div class="grid-block collapse medium-12 large-12 vertical">
-        <div class="top-bar">
-          <div class="top-bar-left">
-            <ul class="menu">
-              <li class="menu-text"><a class="ml-2" href="{% url 'index' %}">Music Social</a></li>
-            </ul>
-          </div>
-          <div class="top-bar-right">
-            <ul class="menu">
-              {% if user.is_authenticated %}
-                <li><a href="{% url 'account' %}">{{ user.username }}</a></li>
-                <li><a href="{% url 'logout' %}">Logout</a></li>
-              {% else %}
-                <li><a href="{% url 'login' %}">Login</a></li>
-                <li><a href="{% url 'register' %}">Register</a></li>
-              {% endif %}
-            </ul>
-          </div>
-        </div>
-        <div class="grid-block">
-          <div style="border-right:2px solid lightgrey" class="grid-content medium-3 large-2 show-for-medium message-side-bar">
-            <section class="block-list">
-              <header>Conversations ({{ chats.count }})</header>
-              <ul>
-                {% for chat in chats %}
-                  {% if chat.user1 == user %}
-                    {% if chat.user2.username in room_name %}
-                      <li><a href="{% url 'room' chat.user1.username|add:"_"|add:chat.user2.username %}" style="background-color:#ededed">{{ chat.user2 }}</a></li>
-                    {% else %}
-                      <li><a href="{% url 'room' chat.user1.username|add:"_"|add:chat.user2.username %}">{{ chat.user2 }}</a></li>
-                    {% endif %}
-                  {% else %}
-                    {% if chat.user1.username in room_name %}
-                      <li><a href="{% url 'room' chat.user2.username|add:"_"|add:chat.user1.username %}" style="background-color:#ededed">{{ chat.user1 }}</a></li>
-                    {% else %}
-                      <li><a href="{% url 'room' chat.user2.username|add:"_"|add:chat.user1.username %}">{{ chat.user1 }}</a></li>
-                    {% endif %}
-                  {% endif %}
-                {% endfor %}
-              </ul>
-            </section>
-          </div>
-          <div class="grid-block small-12 medium-9 large-8 vertical">
-            <div id="chat-log" class="grid-content">
-            </div>
-            <div class="message-input grid-content collapse shrink">
-              <span class="inline-label">
-                <input id="chat-message-input" type="text" placeholder="Message">
-                <a id="chat-message-submit" href="#" class="button">Send</a>
-              </span>
-            </div>
-          </div>
-        </div>
-      </div>
+{% block content %}
+  <div class="grid-block small-12 medium-8 large-6 vertical main-content">
+    <div id="chat-log" class="grid-content">
     </div>
-    <script src="{% static 'chat/reconnecting-websocket.js' %}"></script>
-    <script>
-      var roomName = {{ room_name_json }};
-      var username = {{ username }};
-      var receiver = {{ receiver }}
-      var chatSocket = new ReconnectingWebSocket(
-          'ws://' + window.location.host +
-          '/ws/chat/' + roomName + '/');
-      chatSocket.onopen = function(e) {
-        fetchMessages();
-      }
-      chatSocket.onmessage = function(e) {
-          var data = JSON.parse(e.data);
-          if (data['command'] === 'messages') {
-            for (let i=0; i<data['messages'].length; i++) {
-              createMessage(data['messages'][i]);
-            }
-          } else if (data['command'] === 'new_message'){
-            createMessage(data['message']);
-          }
-      };
-      chatSocket.onclose = function(e) {
-          console.error('Chat socket closed unexpectedly');
-      };
-      document.querySelector('#chat-message-input').onkeyup = function(e) {
-          if (e.keyCode === 13) {  // enter, return
-              document.querySelector('#chat-message-submit').click();
-          }
-      };
-      document.querySelector('#chat-message-submit').onclick = function(e) {
-          var messageInputDom = document.getElementById('chat-message-input');
-          var message = messageInputDom.value;
-          chatSocket.send(JSON.stringify({
-              'command': 'new_message',
-              'message': message,
-              'from': username,
-              'receiver': receiver,
-              'room_name' : roomName
-          }));
-          messageInputDom.value = '';
-      };
-      function fetchMessages() {
-        chatSocket.send(JSON.stringify({'command': 'fetch_messages', 'room': roomName }));
-      }
-      function createMessage(data) {
-        var author = data['author'];
-        var divTag = document.createElement('div');
-        divTag.style.padding = "15px 20px 1px";
-        divTag.style.margin = "5px";
-        divTag.style.borderRadius = "30px";
-        divTag.style.display = "inline-block";
-        var msgListTag = document.createElement('h5');
-        var imgTag = document.createElement('img');
-        var pTag = document.createElement('p');
-        var hrTag = document.createElement('hr');
-        hrTag.style.margin = '0px';
-        pTag.textContent = data.content;
-        imgTag.width = '40';
-        imgTag.height = '40';
-        if (author === username) {
-          imgTag.src = '{{ user.profile.image.url }}';
-          divTag.className = 'sent';
-          divTag.style.backgroundColor = "#ededed";
-          msgListTag.appendChild(imgTag);
-          msgListTag.innerHTML += "  " + author.bold();
-        } else {
-          imgTag.src = '{{ receiver_image.url }}';
-          divTag.className = 'replies';
-          divTag.style.backgroundColor = "#dbd9d9";
-          divTag.style.float = "right";
-          divTag.style.textAlign = "right";
-          msgListTag.innerHTML += author.bold() + " ";
-          msgListTag.appendChild(imgTag);
-        }
+    <div class="message-input grid-content collapse shrink">
+      <span class="inline-label">
+        <input id="chat-message-input" type="text" placeholder="Message">
+        <a id="chat-message-submit" href="#" class="button">Send</a>
+      </span>
+    </div>
+  </div>
+{% endblock content %}
 
-        divTag.appendChild(msgListTag);
-        divTag.appendChild(pTag);
-        document.querySelector('#chat-log').appendChild(divTag);
-        document.querySelector('#chat-log').appendChild(hrTag);
+{% block sidebar %}
+  <ul>
+    {% for chat in chats %}
+      {% if chat.user1 == user %}
+        {% if chat.user2.username in room_name %}
+          <li><a href="{% url 'room' chat.user1.username|add:"_"|add:chat.user2.username %}" style="background-color:#ededed">{{ chat.user2 }}</a></li>
+        {% else %}
+          <li><a href="{% url 'room' chat.user1.username|add:"_"|add:chat.user2.username %}">{{ chat.user2 }}</a></li>
+        {% endif %}
+      {% else %}
+        {% if chat.user1.username in room_name %}
+          <li><a href="{% url 'room' chat.user2.username|add:"_"|add:chat.user1.username %}" style="background-color:#ededed">{{ chat.user1 }}</a></li>
+        {% else %}
+          <li><a href="{% url 'room' chat.user2.username|add:"_"|add:chat.user1.username %}">{{ chat.user1 }}</a></li>
+        {% endif %}
+      {% endif %}
+    {% endfor %}
+  </ul>
+{% endblock sidebar %}
+
+{% block scripts %}
+  <script src="{% static 'chat/reconnecting-websocket.js' %}"></script>
+  <script>
+    var roomName = {{ room_name_json }};
+    var username = {{ username }};
+    var receiver = {{ receiver }}
+    var chatSocket = new ReconnectingWebSocket(
+        'ws://' + window.location.host +
+        '/ws/chat/' + roomName + '/');
+    chatSocket.onopen = function(e) {
+      fetchMessages();
+    }
+    chatSocket.onmessage = function(e) {
+        var data = JSON.parse(e.data);
+        if (data['command'] === 'messages') {
+          for (let i=0; i<data['messages'].length; i++) {
+            createMessage(data['messages'][i]);
+          }
+        } else if (data['command'] === 'new_message'){
+          createMessage(data['message']);
+        }
+    };
+    chatSocket.onclose = function(e) {
+        console.error('Chat socket closed unexpectedly');
+    };
+    document.querySelector('#chat-message-input').onkeyup = function(e) {
+        if (e.keyCode === 13) {  // enter, return
+            document.querySelector('#chat-message-submit').click();
+        }
+    };
+    document.querySelector('#chat-message-submit').onclick = function(e) {
+        var messageInputDom = document.getElementById('chat-message-input');
+        var message = messageInputDom.value;
+        chatSocket.send(JSON.stringify({
+            'command': 'new_message',
+            'message': message,
+            'from': username,
+            'receiver': receiver,
+            'room_name' : roomName
+        }));
+        messageInputDom.value = '';
+    };
+    function fetchMessages() {
+      chatSocket.send(JSON.stringify({'command': 'fetch_messages', 'room': roomName }));
+    }
+    function createMessage(data) {
+      var author = data['author'];
+      var divTag = document.createElement('div');
+      divTag.style.padding = "15px 20px 1px";
+      divTag.style.margin = "5px";
+      divTag.style.borderRadius = "30px";
+      divTag.style.display = "inline-block";
+      var msgListTag = document.createElement('h5');
+      var imgTag = document.createElement('img');
+      var pTag = document.createElement('p');
+      var hrTag = document.createElement('hr');
+      hrTag.style.margin = '0px';
+      pTag.textContent = data.content;
+      imgTag.width = '40';
+      imgTag.height = '40';
+      if (author === username) {
+        imgTag.src = '{{ user.profile.image.url }}';
+        divTag.className = 'sent';
+        divTag.style.backgroundColor = "#ededed";
+        msgListTag.appendChild(imgTag);
+        msgListTag.innerHTML += "  " + author.bold();
+      } else {
+        imgTag.src = '{{ receiver_image.url }}';
+        divTag.className = 'replies';
+        divTag.style.backgroundColor = "#dbd9d9";
+        divTag.style.float = "right";
+        divTag.style.textAlign = "right";
+        msgListTag.innerHTML += author.bold() + " ";
+        msgListTag.appendChild(imgTag);
       }
-    </script>
-  </body>
-</html>
+
+      divTag.appendChild(msgListTag);
+      divTag.appendChild(pTag);
+      document.querySelector('#chat-log').appendChild(divTag);
+      document.querySelector('#chat-log').appendChild(hrTag);
+    }
+  </script>
+{% endblock scripts %}

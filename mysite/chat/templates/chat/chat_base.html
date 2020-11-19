@@ -1,0 +1,97 @@
+{% load static %}
+<!doctype html>
+<html lang="en" ng-app="application">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/foundation/6.6.3/css/foundation.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/motion-ui/1.2.3/motion-ui.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/foundation/6.6.3/css/foundation-prototype.min.css">
+    <link href='https://cdnjs.cloudflare.com/ajax/libs/foundicons/3.0.0/foundation-icons.css' rel='stylesheet' type='text/css'>
+    <link href="{% static 'main/main.css' %}" rel="stylesheet" type="text/css">
+
+    <title>Music Social | Chat</title>
+    <link href="{% static 'chat/app.css' %}" rel="stylesheet" type="text/css">
+    <script src="{% static 'chat/app.js' %}"></script>
+    <script src="{% static 'chat/routes.js' %}"></script>
+    <script src="{% static 'chat/angular.js' %}"></script>
+  </head>
+
+  <style>
+    .message-input, .message-input .inline-label, .menu-bar {margin-bottom: 0;}
+    #sidebar, .messages {border-right: 1px solid #eee;}
+    .message-side-bar {border-left: 1px solid #eee;}
+    .avatar-section {border-top: 1px solid #eee;}
+  </style>
+
+  <body>
+    <div class="grid-frame">
+      <div class="grid-block collapse medium-12 large-12 vertical">
+        <div style="background-color: white; border-bottom: 1px solid #e6e6e6;" class="top-bar" data-sticky data-options="marginTop:0;" data-top-anchor="1" data-btm-anchor="content:bottom">
+          <div class="top-bar-left">
+            <ul style="background-color: white;" class="menu">
+              <li class="menu-text"><a class="ml-2" href="{% url 'index' %}"><i class="fi-music"></i> Music Social</a></li>
+            </ul>
+          </div>
+          <div class="top-bar-right">
+            {% if user.is_authenticated %}
+              <button class="clear button" type="button" data-toggle="account-links">
+                <h6 style="display: inline;">{{ user.username }}</h6> <img width=50px height=50px src="{{ user.profile.image.url }}">
+              </button>
+              <ul class="small dropdown-pane text-center no-bullet" data-position="bottom" data-alignment="right" id="account-links"
+                data-dropdown data-auto-focus="true">
+                <li><a href="{% url 'account' %}">Account</a></li>
+                <li><a href="{% url 'logout' %}">Logout</a></li>
+              </ul>
+            {% else %}
+              <ul style="background-color: white;" class="menu align-middle">
+                <li class="left-button"><a class="button radius" href="{% url 'register' %}">Register</a></li>
+                <li><a class="hollow button radius" href="{% url 'login' %}">Login</a></li>
+              </ul>
+            {% endif %}
+          </div>
+        </div>
+        <div class="grid-block align-center">
+          <div class="medium-2" data-sticky-container style="margin-right: 0px;">
+            <div class="sticky" data-sticky data-anchor="content">
+              <ul class="list-group">
+                {% url 'index' as index %}
+                {% url 'user-posts' user.username as userPosts %}
+                {% url 'post-create' as postCreate %}
+                {% url 'chat-index' as chatIndex %}
+                {% url 'explore' as explore %}
+                <a href="{% url 'index' %}">
+                  <li class="list-group-item">Home</li>
+                </a>
+                {% if user.is_authenticated %}
+                <a href="{% url 'user-posts' user.username %}">
+                  <li class="list-group-item">Profile</li>
+                </a>
+                <a href="{% url 'post-create' %}">
+                  <li class="list-group-item">Post Song</li>
+                </a>
+                <a href="{% url 'chat-index' %}">
+                  <li class="list-group-item active">Messages</li>
+                </a>
+                {% endif %}
+                <a href="{% url 'explore' %}">
+                  <li class="list-group-item" style="border: 0px;">
+                    Explore</li>
+                </a>
+              </ul>
+            </div>
+          </div>
+          {% block content %}{% endblock %}
+          <div class="grid-content medium-2 large-2 show-for-medium message-side-bar">
+            <section class="block-list">
+              <header>Conversations ({{ chats.count }})</header>
+              {% block sidebar %}{% endblock %}
+            </section>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% block scripts %}{% endblock %}
+  </body>
+</html>

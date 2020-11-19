@@ -7,7 +7,7 @@
 
 {% block content %}
   {% if posts.count is 0  %}
-    <h3 style="text-align:center"> There are no posts here yet </h3>
+    <h3 style="text-align:center;"> There are no posts here yet </h3>
   {% else %}
     {% for post in posts %}
       <div class="blog-post">
@@ -18,8 +18,26 @@
         {% endif %}
         <small class="text-muted">{{ post.date_posted|date:"F d, Y" }}
           {% if post.user == user %}
-            <a style="margin-left:7px;margin-right:7px" href="{% url 'post-update' post.id %}">Update</a>
-            <a href="{% url 'post-delete' post.id %}">Delete</a>
+            <a style="margin-left:7px; margin-right:7px" href="{% url 'post-update' post.id %}">Update</a>
+            <a data-toggle="delete-post">Delete</a>
+            <!-- modal for deleting post -->
+            <div class="large reveal text-center" id="delete-post" data-reveal>
+              <form action="{% url 'post-delete' post.id %}" method="POST">
+                {% csrf_token %}
+                <fieldset class="form-group">
+                  <h2>Are you sure you want to delete this post?</h2>
+                </fieldset>
+                <div class="form-group" style="padding-top: 40px;">
+                  <button class="alert button left-button" type="submit">Yes, Delete</button>
+                  <a class="button" data-close aria-label="Close reveal" type="button">Cancel</a>
+                </div>
+              </form>
+              <button class="close-button" data-close aria-label="Close reveal" type="button">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <!-- modal for deleting post -->
+
           {% endif %}
         </small>
         {% if post.link == '' %}
@@ -28,12 +46,21 @@
           <iframe width="100%" height="125" scrolling="no" frameborder="no" allow="autoplay" src="{{ post.link }}"></iframe>
         {% endif %}
         <p>{{ post.description }}</p>
-            <a class="hollow button" href="{% url 'comment-create' post.id %}?next={{request.path}}">Leave a Comment</a>
-            {% if post in user.profile.likes.all %}
-              <span style="float:right"><a class="button" style="color:white" href="{% url 'like' post.id %}?next={{request.path}}">Like: {{ post.liked.count }}</a></span>
-            {% else %}
-              <span style="float:right"><a class="hollow button" href="{% url 'like' post.id %}?next={{request.path}}">Like: {{ post.liked.count }}</a></span>
-            {% endif %}
+        {% if user.is_authenticated %}
+          <a class="hollow button" href="{% url 'comment-create' post.id %}?next={{request.path}}">Leave a Comment</a>
+        {% else %}
+          <a class="hollow button" data-toggle="need-account">Leave a Comment</a>
+        {% endif %}
+
+        {% if post in user.profile.likes.all %}
+          <span style="float:right"><a class="button" style="color:white" href="{% url 'like' post.id %}?next={{request.path}}">Like: {{ post.liked.count }}</a></span>
+        {% else %}
+          {% if user.is_authenticated %}
+            <span style="float:right"><a class="hollow button" href="{% url 'like' post.id %}?next={{request.path}}">Like: {{ post.liked.count }}</a></span>
+          {% else %}
+            <span style="float:right"><a class="hollow button" data-toggle="need-account">Like: {{ post.liked.count }}</a></span>
+          {% endif %}
+        {% endif %}
       </div>
 
       <!-- comments -->
@@ -46,15 +73,32 @@
               <h6>
                 <a href="{% url 'user-posts' comment.author.username %}">{{ comment.author.username }}</a>
                 <small>{{ comment.date_posted|date:"D, d M, Y" }}</small>
+                {% if comment.author == user %}
+                <a data-toggle="delete-comment">Delete</a>
+                <!-- modal for deleting comment -->
+                <div class="large reveal text-center" id="delete-comment" data-reveal>
+                  <form action="{% url 'comment-delete' comment.id %}" method="POST">
+                    {% csrf_token %}
+                    <fieldset class="form-group">
+                      <h2>Are you sure you want to delete this comment?</h2>
+                    </fieldset>
+                    <div class="form-group" style="padding-top: 40px;">
+                      <button class="alert button left-button" type="submit">Yes, Delete</button>
+                      <a class="button" data-close aria-label="Close reveal" type="button">Cancel</a>
+                    </div>
+                  </form>
+                  <button class="close-button" data-close aria-label="Close reveal" type="button">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <!-- modal for deleting comment -->
+                {% endif %}
               </h6>
 
             </div>
           </div>
           <div class="comment-section-text">
             <p>{{ comment.text }}
-              {% if comment.author == user %}
-                <a href="{% url 'comment-delete' comment.id %}">Delete</a>
-              {% endif %}
             </p>
           </div>
         {% empty %}
@@ -62,8 +106,19 @@
         {% endfor %}
       </div>
       <!--/comments-->
-      <hr>
+      <hr style="color: #e6e6e6; margin-top: 0px;">
     {% endfor %}
+
+    <!-- modal for trying to do something with no account -->
+    <div class="large reveal text-center" id="need-account" data-reveal>
+      <h2 style="padding-bottom: 10px;">Create an Account</h2>
+      <p style="padding-bottom: 50px;">You need an account to do that</p>
+      <a class="button radius left-button" href="{% url 'register' %}">Register</a>
+      <a class="hollow button radius" href="{% url 'login' %}">Login</a>
+      <button class="close-button" data-close aria-label="Close reveal" type="button">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
   {% endif %}
 
   <!--Pagination-->
